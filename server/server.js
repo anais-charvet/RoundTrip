@@ -1,11 +1,21 @@
 import express from "express";
 import cors from "cors";
 import { readdirSync } from "fs";
+import mongoose from 'mongoose';
 const morgan = require("morgan");
 require("dotenv").config();
 
 //creation express app
 const app = express();
+
+//db
+mongoose.connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    // useFindAndModify: false,
+    useUnifiedTopology: true,
+    // useCreateIdex: true,
+}).then(() => console.log("DB CONNECTED"))
+.catch((err) => console.log("DB CONNECTION ERROR => ", err))
 
 // apply middleware (code running before resp sent to client)
 app.use(cors());
