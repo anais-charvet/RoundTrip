@@ -22,4 +22,5 @@ export const hashPassword = (password) => {
 //from client & db
 export const comparePassword = (password, hashed) => {
     return bcrypt.compare(password, hashed)
+    // boolean true if matches
 };

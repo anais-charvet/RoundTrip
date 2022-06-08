@@ -1,7 +1,10 @@
-import {useState} from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
+import Link from "next/link";
+import { Context } from "../context";
+import { useRouter } from "next/router";
 
 
 const Register = () => {
@@ -10,12 +13,30 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
+        //state
+        const { 
+            state: { user }, 
+            dispatch,
+        }  = useContext(Context);
+
+        // const { user } = state
+    
+        //router
+        const router = useRouter();
+
+        useEffect(() => {
+            if(user !== null) router.push("/");
+        },[user]);
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         // console.table({name, email, password});
         try {
             setLoading(true);
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API}/register`, {
+            // const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API}/register`, {
+            //après target added in server.js
+            const { data } = await axios.post(`/api/register`, {
                 name,
                 email,
                 password,
@@ -66,6 +87,14 @@ const Register = () => {
             {loading ? <SyncOutlined spin /> : "Submit"}
             </button>
             </form>
+
+            <p className="text-center p-3">
+                Already has an account ?{" "}
+                <Link href="/login">
+                    <a>Login</a>
+                </Link>
+            </p>
+
             </div>
         </>
     )
