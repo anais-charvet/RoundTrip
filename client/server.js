@@ -32,5 +32,5 @@ app.prepare().then(() => {
 
 })
 .catch(err => {
-    console.log("Error", err)
+    /*console.log("Error Prout", err)*/
 })

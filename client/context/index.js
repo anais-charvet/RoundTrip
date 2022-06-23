@@ -12,7 +12,7 @@ const Context = createContext()
 
 // root reducer
 const rootReducer = (state, action) => {
-    //action will contient type and payload, payload contient user/data info from back that u want to register uin the state
+    //action will contient type and payload, payload contient user/data info from back that u want to register in the state
     switch(action.type) {
         case "LOGIN": 
             return { ...state, user: action.payload };
@@ -26,7 +26,7 @@ const rootReducer = (state, action) => {
 //context provider
 const Provider = ({ children }) => {
     // dispatch is always with type and payload so the state is updated
-    const [state, dispatch] = useReducer(rootReducer, initalState);
+    const [ state, dispatch ] = useReducer(rootReducer, initalState);
 
     //router 
     const router = useRouter();
@@ -40,14 +40,14 @@ const Provider = ({ children }) => {
 
     axios.interceptors.response.use(
         function(response){
-            //any status code that lies within 2XX cause this fc to trigger
+            //any status code that lies within 2XX causes this fc to trigger
             return response;
         }, 
         
         function(error) {
-            //any tatus code that falses outside the range of 2XX causes this fc to trigger
+            //any status code that falls outside the range of 2XX causes this fc to trigger
             let res = error.response;
-            if(res.tatus === 401 && res.config && !res.config.__isRetryRequest){
+            if(res.status === 401 && res.config && !res.config.__isRetryRequest){
                 return new Promise((resolve, reject) => {
                     axios.get("/api/logout")
                     .then((data) => {
@@ -70,7 +70,8 @@ const Provider = ({ children }) => {
     useEffect(() => {
         const getCsrfToken = async () => {
             const { data } = await axios.get("/api/csrf-token");
-            // console.log("CSRF", data);
+            //
+            console.log("CSRF", data);
             axios.defaults.headers["X-CSRF-Token"] = data.getCsrfToken;
         };
         getCsrfToken();

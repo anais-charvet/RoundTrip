@@ -1,7 +1,9 @@
-import expressJwt from "express-jwt";
+import { expressjwt } from "express-jwt";
 
-export const requireSignin = expressJwt({
-    getToken: () => requireSignin.cookies.token,
+
+export const requireSignin = expressjwt({
+    getToken: (req, res) => req.cookies.token,
     secret: process.env.JWT_SECRET,
-    algorithms: ["HS265"],
-})
+    algorithms: ["HS256"],
+});
+

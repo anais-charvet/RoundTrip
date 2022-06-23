@@ -47,12 +47,12 @@ readdirSync("./routes").map((r) =>
 );
 
 //csrf
-app.use(csrfProtection)
+app.use(csrfProtection);
 
 
 //endpoint
 app.get("/api/csrf-token", (req, res) => {
-    res.json({csrfToken: req.csrfToken() });
+    res.json( { csrfToken: req.csrfToken() } );
 });
 
 //port, with process as top level object of node where entire process runs.
