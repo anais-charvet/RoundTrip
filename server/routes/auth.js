@@ -1,6 +1,6 @@
 import express from "express";
 // controllers
-import { register, login, logout, currentUser, sendTestEmail } from "../controllers/auth";
+import { register, login, logout, currentUser, sendTestEmail, forgotPassword } from "../controllers/auth";
 //middleware
 import { requireSignin } from "../middlewares";
 
@@ -18,5 +18,6 @@ router.post("/login", login);
 router.get("/logout", logout);
 router.get("/current-user", requireSignin, currentUser);
 router.get("/send-email", sendTestEmail);
+router.post("/forgot-password", forgotPassword)
 
 module.exports = router;

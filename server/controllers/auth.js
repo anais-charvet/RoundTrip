@@ -4,6 +4,15 @@ import { hashPassword, comparePassword } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import AWS from "aws-sdk";
 
+//
+//pointing out a so called require in node_modules/nanoid/index.js
+//downgraded to npm i nanoid@2.1.11, then up again to newer. TODO: check ESM vs. 
+//CommonJS 
+import { nanoid } from "nanoid";
+
+// var { nanoid } = require("nanoid");
+//const {nanoid} = require('nanoid');
+
 const router = express.Router();
 
 const awsConfig = {
@@ -75,7 +84,7 @@ export const login = async (req, res) => {
         res.json(user)
     } catch(err) {
         /*console.log(err)*/
-        return res.status(400).send("Error. Try againnnnnn.")
+        return res.status(400).send("Error. Try again.")
     }
 };
 
@@ -99,6 +108,57 @@ export const currentUser = async (req, res) => {
     }
 };
 
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        // console.log(email);
+        const shortCode = nanoid(6).toUpperCase();
+        const user = await User.findOneAndUpdate(
+            { email }, 
+            { passwordResetCode:  shortCode }
+            );
+            if(!user) return res.status(400).send ("User not found");
+
+            //email
+            const params = {
+                Source: process.env.EMAIL_FROM,
+                Destination: {
+                    ToAddresses: [email]
+                },
+                Message: {
+                    Body: {
+                        Html: {
+                            Charset: "UTF-8",
+                            Data: `
+                             <html>
+                                <h1>Reset password</h1>
+                                <p>Use this code to reset your password</p>
+                                <h2 style="color:red;">${shortCode}</h2>
+                                <i>RoundTrip.com</i>
+                             </html>
+                            `
+                        }
+                    },
+                    Subject: {
+                        Charset: "UTF-8",
+                        Data: "Reset Password",
+                    },
+                },
+            };
+
+
+            const emailSent = SES.sendEmail(params).promise();
+            emailSent.then((data) => {
+                console.log(data);
+                res.json({ ok: true })
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    } catch(err){
+        console.log(err)
+    }
+ }
 
 export const sendTestEmail = async (req, res) => {
     // console.log("send email using SES");
